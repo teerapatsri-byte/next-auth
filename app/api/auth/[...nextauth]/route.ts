@@ -14,14 +14,14 @@ const handler = NextAuth({
           headers: { "Content-Type": "application/json" },
         });
 
-        const result = await res.json();
+        console.log("login status:", res.status);
+        const text = await res.text();
+        console.log("login body:", text); // ดูว่าเป็น JSON จริงไหม หรือเป็นหน้า Vercel protection
 
+        const result = JSON.parse(text);
         const user = result.user;
 
-        if (res.ok && user) {
-          return user;
-        }
-
+        if (res.ok && user) return user;
         return null;
       },
     }),
