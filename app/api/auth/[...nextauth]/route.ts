@@ -38,6 +38,16 @@ const handler = NextAuth({
     verifyRequest: "/auth/verify-request",
     newUser: "/auth/new-user",
   },
+  callbacks: {
+    async redirect({ url, baseUrl }) {
+      // ถ้า url ที่ขอ redirect เป็น relative path (ขึ้นต้นด้วย /) ให้ไปที่ domain ปัจจุบัน (baseUrl)
+      if (url.startsWith("/")) return `${baseUrl}${url}`;
+      // ถ้า url เป็น absolute URL แต่ origin ตรงกับ baseUrl ก็ให้ไปได้
+      else if (new URL(url).origin === baseUrl) return url;
+      // ถ้าไม่ตรงเลย (เช่น domain แปลกปลอม) บังคับกลับ baseUrl เพื่อความปลอดภัย
+      return baseUrl;
+    },
+  },
 });
 
 export { handler as GET, handler as POST };
