@@ -3,6 +3,7 @@ import { connect } from "@/lib/mysql_connect";
 import { compare } from "bcrypt-ts";
 
 interface User {
+  id: number; // เพิ่มบรรทัดนี้
   first_name: string;
   last_name: string;
   email: string;
@@ -15,7 +16,7 @@ export async function loginUser(email: string, password: string) {
   }
 
   const [rows] = (await connect.query(
-    "SELECT first_name, last_name, email, password FROM users WHERE email = ?",
+    "SELECT id, first_name, last_name, email, password FROM users WHERE email = ?", // เพิ่ม id
     [email],
   )) as [User[], any];
 
@@ -32,6 +33,7 @@ export async function loginUser(email: string, password: string) {
   }
 
   return {
+    id: String(user.id), // NextAuth ต้องการ id เป็น string
     email: user.email,
     name: user.first_name + " " + user.last_name,
   };

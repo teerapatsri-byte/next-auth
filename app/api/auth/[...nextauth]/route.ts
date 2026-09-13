@@ -7,11 +7,16 @@ const handler = NextAuth({
   providers: [
     CredentialsProvider({
       name: "credentials",
-      credentials: {},
+      credentials: {
+        email: { label: "Email", type: "email" },
+        password: { label: "Password", type: "password" },
+      },
       async authorize(credentials) {
         try {
-          const email = credentials?.email as string;
-          const password = credentials?.password as string;
+          const email = credentials?.email;
+          const password = credentials?.password;
+
+          if (!email || !password) return null;
 
           const user = await loginUser(email, password);
           return user ?? null;
