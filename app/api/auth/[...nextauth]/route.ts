@@ -1,6 +1,7 @@
-import { loginUser } from "@/lib/loginUser";
+// app/api/auth/[...nextauth]/route.ts
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import { loginUser } from "@/lib/loginUser";
 
 const handler = NextAuth({
   providers: [
@@ -9,7 +10,7 @@ const handler = NextAuth({
       credentials: {},
       async authorize(credentials) {
         try {
-          const user = await loginUser(credentials);
+          const user = await loginUser(credentials as any);
           return user ?? null;
         } catch (e) {
           console.error("authorize error:", e);
@@ -18,9 +19,7 @@ const handler = NextAuth({
       },
     }),
   ],
-  session: {
-    strategy: "jwt",
-  },
+  session: { strategy: "jwt" },
   secret: process.env.NEXTAUTH_SECRET,
   pages: {
     signIn: "/",
