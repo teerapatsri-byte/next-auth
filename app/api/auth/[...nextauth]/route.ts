@@ -10,7 +10,10 @@ const handler = NextAuth({
       credentials: {},
       async authorize(credentials) {
         try {
-          const user = await loginUser(credentials as any);
+          const email = credentials?.email as string;
+          const password = credentials?.password as string;
+
+          const user = await loginUser(email, password);
           return user ?? null;
         } catch (e) {
           console.error("authorize error:", e);
@@ -19,7 +22,9 @@ const handler = NextAuth({
       },
     }),
   ],
-  session: { strategy: "jwt" },
+  session: {
+    strategy: "jwt",
+  },
   secret: process.env.NEXTAUTH_SECRET,
   pages: {
     signIn: "/",

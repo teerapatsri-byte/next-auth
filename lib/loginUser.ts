@@ -1,19 +1,38 @@
 // lib/loginUser.ts
-export async function loginUser(credentials: any) {
-  const BASE_URL = process.env.NEXTAUTH_URL ?? "http://localhost:3000";
-  const res = await fetch(BASE_URL + "/api/login", {
-    method: "POST",
-    body: JSON.stringify(credentials),
-    headers: { "Content-Type": "application/json" },
-  });
+import { connect } from "@/lib/mysql_connect";
+import { compare } from "bcrypt-ts";
 
-  console.log("login status:", res.status);
-  const text = await res.text();
-  console.log("login body:", text); // ดูว่าเป็น JSON จริงไหม หรือเป็นหน้า Vercel protection
+interface User {
+  first_name: string;
+  last_name: string;
+  email: string;
+  password: string;
+}
 
-  const result = JSON.parse(text);
-  const user = result.user;
+export async function loginUser(email: string, password: string) {
+  if (!email || !password) {
+    return null;
+  }
 
-  if (res.ok && user) return user;
-  return null;
+  const [rows] = (await connect.query(
+    "SELECT first_name, last_name, email, password FROM users WHERE email = ?",
+    [email],
+  )) as [User[], any];
+
+  const user = rows[0];
+
+  if (!user) {
+    return null;
+  }
+
+  const is_password = await compare(password, user.password);
+
+  if (!is_password) {
+    return null;
+  }
+
+  return {
+    email: user.email,
+    name: user.first_name + " " + user.last_name,
+  };
 }
