@@ -3,6 +3,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
+import Swal from "sweetalert2";
 
 export default function Home() {
   const [email, setEmail] = useState("");
@@ -19,10 +20,22 @@ export default function Home() {
       });
 
       if (!res?.ok) {
-        alert("อีเมลหรือรหัสผ่านไม่ถูกต้อง");
+        Swal.fire({
+          position: "top-end",
+          icon: "error",
+          title: "อีเมลหรือรหัสผ่านไม่ถูกต้อง",
+          showConfirmButton: false,
+          timer: 1500,
+        });
         return;
       }
-      alert("เข้าสู่ระบบสำเร็จ");
+      Swal.fire({
+        position: "top-end",
+        icon: "success",
+        title: "เข้าสู่ระบบสำเร็จ",
+        showConfirmButton: false,
+        timer: 1500,
+      });
       router.push("/dashboard");
       router.refresh();
     } catch (err) {

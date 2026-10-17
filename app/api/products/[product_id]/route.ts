@@ -38,11 +38,11 @@ export async function PUT(
 ) {
   try {
     const { product_id } = await params;
-    const { name } = await req.json();
+    const { name, price } = await req.json();
 
     await connect.query(
-      "UPDATE products SET product_name = ? , updated_at = ? WHERE product_id = ? ",
-      [name, new Date(), product_id],
+      "UPDATE products SET product_name = ? , product_price  = ? , updated_at = ? WHERE product_id = ? ",
+      [name, price, new Date(), product_id],
     );
 
     return Response.json({

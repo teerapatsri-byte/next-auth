@@ -13,6 +13,7 @@ interface ProductEditPageProps {
 function ProductPage({ params }: ProductEditPageProps) {
   const { product_id } = use(params);
   const [name, setName] = useState("");
+  const [price, setPrice] = useState(0);
   const router = useRouter();
 
   const fetchData = async () => {
@@ -21,6 +22,7 @@ function ProductPage({ params }: ProductEditPageProps) {
       const data = await res.json();
       console.log(data);
       setName(data?.product?.product_name);
+      setPrice(data?.product?.product_price);
     } catch (err) {
       console.error(err);
       alert("เกิดข้อผิดพลาด");
@@ -40,6 +42,7 @@ function ProductPage({ params }: ProductEditPageProps) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name: name,
+          price: price,
         }),
       });
 
@@ -81,6 +84,23 @@ function ProductPage({ params }: ProductEditPageProps) {
                   placeholder="John"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
+                />
+              </div>
+              <div className="mb-5">
+                <label
+                  htmlFor="first_name"
+                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                >
+                  ราคา
+                </label>
+
+                <input
+                  type="text"
+                  id="first_name"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+                  placeholder="0.00"
+                  value={price ?? 0}
+                  onChange={(e) => setPrice(Number(e.target.value))}
                 />
               </div>
 

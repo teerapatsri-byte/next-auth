@@ -3,9 +3,11 @@
 import Sidebar from "@/app/components/sidebar";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Swal from "sweetalert2";
 
 function ProductPage() {
   const [name, setName] = useState("");
+  const [price, setPrice] = useState(0);
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -17,12 +19,20 @@ function ProductPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name: name,
+          price: price,
         }),
       });
 
       const result = await res.json();
 
-      alert(result.message);
+      Swal.fire({
+        position: "top-end",
+        icon: "success",
+        title: result.message,
+        showConfirmButton: false,
+        timer: 1500,
+      });
+
       router.push("/products");
       router.refresh();
     } catch (err) {
@@ -55,9 +65,26 @@ function ProductPage() {
                   type="text"
                   id="first_name"
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
-                  placeholder="John"
+                  placeholder="หิน"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
+                />
+              </div>
+              <div className="mb-5">
+                <label
+                  htmlFor="first_name"
+                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                >
+                  ราคา
+                </label>
+
+                <input
+                  type="text"
+                  id="first_name"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+                  placeholder="100"
+                  value={price}
+                  onChange={(e) => setPrice(Number(e.target.value))}
                 />
               </div>
 

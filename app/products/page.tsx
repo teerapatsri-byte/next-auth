@@ -7,6 +7,7 @@ import Link from "next/link";
 interface Product {
   product_id: number;
   product_name: string;
+  product_price: string;
   created_at: string;
   updated_at: string | null;
 }
@@ -25,6 +26,7 @@ const formatDate = (date: string | null) => {
 
 function ProductPage() {
   const [products, setProducts] = useState<Product[]>([]);
+  console.log("products :", products);
 
   const fetchData = async () => {
     const res = await fetch("/api/products");
@@ -75,6 +77,7 @@ function ProductPage() {
                   {[
                     "ลำดับ",
                     "ชื่อ",
+                    "ราคา",
                     "วันที่สร้าง",
                     "วันที่แก้ไข",
                     "ดำเนินการ",
@@ -98,6 +101,7 @@ function ProductPage() {
                       {idx + 1}
                     </th>
                     <td className="px-6 py-4">{item.product_name}</td>
+                    <td className="px-6 py-4">{item.product_price ?? 0}</td>
                     <td className="px-6 py-4">{formatDate(item.created_at)}</td>
                     <td className="px-6 py-4">
                       {formatDate(item.updated_at) ?? "-"}
