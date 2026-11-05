@@ -36,12 +36,12 @@ export default function Home() {
         showConfirmButton: false,
         timer: 1500,
       });
-      router.push("/dashboard");
       router.refresh();
     } catch (err) {
       console.log("Error Auth :", err);
       alert("เกิดข้อผิดพลาด");
     }
+    router.push("/dashboard");
   };
 
   return (

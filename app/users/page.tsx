@@ -19,6 +19,28 @@ function UserPage() {
     setUsers(data?.users);
   };
 
+  const handleSearch = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const params = new URLSearchParams();
+    params.append("first_name", "test");
+    // params.append("last_name", "...");
+    // params.append("email", "...");
+
+    try {
+      const response = await fetch(`/api/users?${params.toString()}`);
+
+      if (!response.ok) {
+        throw new Error(`Request failed: ${response.status}`);
+      }
+
+      const result = await response.json();
+      console.log(result.users);
+    } catch (err) {
+      console.log("Search error:", err);
+    }
+  };
+
   const handleDelete = async (id: number) => {
     try {
       const res = await fetch("/api/users/" + id, {
@@ -42,10 +64,58 @@ function UserPage() {
   return (
     <>
       <Sidebar />
+
       {/* Main content */}
       <div className="p-4 sm:ml-64">
+        <h2 className="font-bold text-2xl my-2">Users</h2>
+
+        <div className="w-full max-w-full p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:p-6 md:p-8 dark:bg-gray-800 dark:border-gray-700">
+          <form className="space-y-6" onSubmit={handleSearch} method="GET">
+            <h5 className="text-xl font-medium text-gray-900 dark:text-white">
+              ค้นหา
+            </h5>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+              <div>
+                <label
+                  htmlFor="first_name"
+                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                >
+                  ชื่อ
+                </label>
+                <input
+                  type="text"
+                  name="first_name"
+                  id="first_name"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                  placeholder="ทดสอบ"
+                />
+              </div>
+              <div>
+                <label
+                  htmlFor="last_name"
+                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                >
+                  นามสกุล
+                </label>
+                <input
+                  type="text"
+                  name="last_name"
+                  id="last_name"
+                  placeholder="ระบบ"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                />
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              className="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+            >
+              ค้นหา
+            </button>
+          </form>
+        </div>
         <div className="p-4  rounded-lg dark:border-gray-700">
-          <h2 className="font-bold text-2xl my-2">Users</h2>
           <div className="relative overflow-x-auto">
             <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
               <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">

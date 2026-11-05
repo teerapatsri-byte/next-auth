@@ -50,11 +50,11 @@ function Sidebar() {
               <img
                 src="https://flowbite.com/images/logo.svg"
                 className="h-6 me-3 sm:h-7"
-                alt="Flowbite Logo"
+                alt="Shop Logo"
               />
 
               <span className="self-center text-xl font-semibold whitespace-nowrap dark:text-white">
-                Flowbite
+                Shop
               </span>
             </a>
 
