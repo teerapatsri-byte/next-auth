@@ -4,6 +4,7 @@ import Sidebar from "@/app/components/sidebar";
 import { useEffect, useState } from "react";
 import { use } from "react";
 import { useRouter } from "next/navigation";
+import Swal from "sweetalert2";
 
 interface UserEditPageProps {
   params: Promise<{
@@ -59,13 +60,24 @@ function UserEditPage({ params }: UserEditPageProps) {
       const result = await res.json();
 
       console.log(result);
-      alert(result.message);
-      router.push("/users");
-      router.refresh();
+      Swal.fire({
+        position: "top-end",
+        icon: "success",
+        title: result.message,
+        showConfirmButton: false,
+        timer: 1500,
+      });
     } catch (err) {
       console.log(err);
-      alert("เกิดข้อผิดพลาด");
+      Swal.fire({
+        position: "top-end",
+        icon: "error",
+        title: "เกิดข้อผิดพลาด",
+        showConfirmButton: false,
+        timer: 1500,
+      });
     }
+    router.push("/users");
   };
 
   return (
@@ -75,16 +87,19 @@ function UserEditPage({ params }: UserEditPageProps) {
       {/* Main content */}
       <div className="p-4 sm:ml-64">
         <div className="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700">
+          <p className="mb-5 text-2xl font-semibold text-gray-900 dark:text-white">
+            แก้ไขผู้ใช้งาน
+          </p>
           <form className="max-w-sm" onSubmit={handleSubmit}>
             {/* ชื่อ */}
             <div className="mb-5">
               <label
                 htmlFor="first_name"
-                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                className=" mb-2 text-sm font-medium text-gray-900 dark:text-white"
               >
                 ชื่อ
               </label>
-
+              <span className="text-red-500">*</span>
               <input
                 type="text"
                 id="first_name"
@@ -92,6 +107,7 @@ function UserEditPage({ params }: UserEditPageProps) {
                 placeholder="John"
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
+                required
               />
             </div>
 
@@ -99,11 +115,11 @@ function UserEditPage({ params }: UserEditPageProps) {
             <div className="mb-5">
               <label
                 htmlFor="last_name"
-                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                className=" mb-2 text-sm font-medium text-gray-900 dark:text-white"
               >
                 นามสกุล
               </label>
-
+              <span className="text-red-500">*</span>
               <input
                 type="text"
                 id="last_name"
@@ -111,6 +127,7 @@ function UserEditPage({ params }: UserEditPageProps) {
                 placeholder="Doe"
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
+                required
               />
             </div>
 

@@ -13,6 +13,9 @@ interface User {
 function UserPage() {
   const [users, setUsers] = useState<User[]>([]);
 
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+
   const fetchData = async () => {
     const res = await fetch("/api/users");
     const data = await res.json();
@@ -23,9 +26,8 @@ function UserPage() {
     e.preventDefault();
 
     const params = new URLSearchParams();
-    params.append("first_name", "test");
-    // params.append("last_name", "...");
-    // params.append("email", "...");
+    params.append("first_name", firstName);
+    params.append("last_name", lastName);
 
     try {
       const response = await fetch(`/api/users?${params.toString()}`);
@@ -36,6 +38,7 @@ function UserPage() {
 
       const result = await response.json();
       console.log(result.users);
+      setUsers(result.users);
     } catch (err) {
       console.log("Search error:", err);
     }
@@ -88,6 +91,7 @@ function UserPage() {
                   id="first_name"
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                   placeholder="ทดสอบ"
+                  onChange={(e) => setFirstName(e.target.value)}
                 />
               </div>
               <div>
@@ -103,6 +107,7 @@ function UserPage() {
                   id="last_name"
                   placeholder="ระบบ"
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                  onChange={(e) => setLastName(e.target.value)}
                 />
               </div>
             </div>
@@ -130,37 +135,45 @@ function UserPage() {
                 </tr>
               </thead>
               <tbody>
-                {users.map((item, idx) => (
-                  <tr
-                    className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200"
-                    key={item.id}
-                  >
-                    <th
-                      scope="row"
-                      className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                {users.length > 0 ? (
+                  users.map((item, idx) => (
+                    <tr
+                      className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200"
+                      key={item.id}
                     >
-                      {idx + 1}
-                    </th>
-                    <td className="px-6 py-4">
-                      {item.first_name + " " + item.last_name}
-                    </td>
-                    <td className="px-6 py-4">{item.email}</td>
-                    <td className="px-6 py-4 text-left ">
-                      <a
-                        href={"/users/" + item.id + "/edit"}
-                        className="font-medium text-blue-600 dark:text-blue-500 hover:underline mx-2"
+                      <th
+                        scope="row"
+                        className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                       >
-                        Edit
-                      </a>
-                      <button
-                        className="font-medium text-red-600 dark:text-red-500 hover:underline mx-2"
-                        onClick={() => handleDelete(item.id)}
-                      >
-                        Delete
-                      </button>
+                        {idx + 1}
+                      </th>
+                      <td className="px-6 py-4">
+                        {item.first_name + " " + item.last_name}
+                      </td>
+                      <td className="px-6 py-4">{item.email}</td>
+                      <td className="px-6 py-4 text-left ">
+                        <a
+                          href={"/users/" + item.id + "/edit"}
+                          className="font-medium text-blue-600 dark:text-blue-500 hover:underline mx-2"
+                        >
+                          แก้ไข
+                        </a>
+                        <button
+                          className="font-medium text-red-600 dark:text-red-500 hover:underline mx-2"
+                          onClick={() => handleDelete(item.id)}
+                        >
+                          ลบ
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
+                    <td colSpan={4} className="px-6 py-4 text-center">
+                      ไม่มีข้อมูลผู้ใช้งาน
                     </td>
                   </tr>
-                ))}
+                )}
               </tbody>
             </table>
           </div>
