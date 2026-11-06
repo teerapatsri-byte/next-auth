@@ -48,13 +48,13 @@ function Sidebar() {
           <div className="flex items-center justify-between ps-2.5 mb-5">
             <a href="#" className="flex items-center">
               <img
-                src="https://flowbite.com/images/logo.svg"
-                className="h-6 me-3 sm:h-7"
-                alt="Shop Logo"
+                src="/images/logo3.png"
+                className=" mr-3 w-10 h-10 rounded-full"
+                alt="ระบบขนส่งสินค้า Logo"
               />
 
               <span className="self-center text-xl font-semibold whitespace-nowrap dark:text-white">
-                Shop
+                ระบบขนส่งสินค้า
               </span>
             </a>
 
@@ -72,8 +72,8 @@ function Sidebar() {
           <ul className="space-y-2 font-medium">
             {[
               { url: "/dashboard", label: "Dashboard" },
-              { url: "/users", label: "Users" },
-              { url: "/products", label: "Products" },
+              { url: "/users", label: "ผู้ใช้งาน" },
+              { url: "/products", label: "สินค้า" },
             ].map((item, idx) => (
               <li key={idx}>
                 <a
@@ -92,7 +92,7 @@ function Sidebar() {
                 onClick={() => signOut({ callbackUrl: "/" })}
               >
                 <span className="flex-1 ms-3 text-left whitespace-nowrap">
-                  Sign Out
+                  ออกจากระบบ
                 </span>
               </button>
             </li>

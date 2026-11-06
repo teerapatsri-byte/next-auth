@@ -10,17 +10,32 @@ interface Stat {
 
 function DashboardPage() {
   const [stats, setStats] = useState<Stat[]>([]);
+  const [loading, setLoading] = useState(true);
 
   const fetchData = async () => {
-    const res = await fetch("/api/dashboard");
-    const data = await res.json();
-    console.log(data);
-    setStats(data?.stats);
+    try {
+      const res = await fetch("/api/dashboard");
+      const data = await res.json();
+      console.log(data);
+      setStats(data?.stats);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
     fetchData();
   }, []);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="text-xl font-semibold">Loading...</div>
+      </div>
+    );
+  }
 
   return (
     <>

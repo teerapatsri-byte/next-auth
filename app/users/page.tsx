@@ -13,23 +13,30 @@ interface User {
 
 function UserPage() {
   const [users, setUsers] = useState<User[]>([]);
+  const [loading, setLoading] = useState(true);
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
 
   const fetchData = async () => {
-    const res = await fetch("/api/users");
-    const data = await res.json();
-    setUsers(data?.users);
+    try {
+      const res = await fetch("/api/users");
+      const data = await res.json();
+      setUsers(data?.users);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleSearch = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const params = new URLSearchParams();
-    params.append("first_name", firstName);
-    params.append("last_name", lastName);
-
+    params.append("first_name", firstName.trim());
+    params.append("last_name", lastName.trim());
+    setLoading(true);
     try {
       const response = await fetch(`/api/users?${params.toString()}`);
 
@@ -42,6 +49,8 @@ function UserPage() {
       setUsers(result.users);
     } catch (err) {
       console.log("Search error:", err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -82,6 +91,15 @@ function UserPage() {
   useEffect(() => {
     fetchData();
   }, []);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="text-xl font-semibold">Loading...</div>
+      </div>
+    );
+  }
+
   return (
     <>
       <Sidebar />
