@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Sidebar from "../components/sidebar";
+import Swal from "sweetalert2";
 
 interface User {
   id: number;
@@ -46,14 +47,31 @@ function UserPage() {
 
   const handleDelete = async (id: number) => {
     try {
-      const res = await fetch("/api/users/" + id, {
-        method: "DELETE",
+      const resultAlert = await Swal.fire({
+        title: "คุณแน่ใจใช่ไหม?",
+        text: "ว่าจะลบข้อมูลนี้!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "ใช่",
+        cancelButtonText: "ยกเลิก",
       });
-      const result = await res.json();
 
-      console.log(result);
+      if (resultAlert.isConfirmed) {
+        const res = await fetch("/api/users/" + id, {
+          method: "DELETE",
+        });
+        const result = await res.json();
 
-      alert("ลบข้อมูลสำเร็จ");
+        console.log(result);
+        Swal.fire({
+          title: "ลบแล้ว!",
+          text: "ข้อมูลของคุณถูกลบแล้ว.",
+          icon: "success",
+        });
+      }
+
       fetchData();
     } catch (err) {
       console.log(err);
