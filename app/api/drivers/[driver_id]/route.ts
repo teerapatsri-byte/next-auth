@@ -1,31 +1,31 @@
 import { connect } from "@/lib/mysql_connect";
 
-interface Customer {
-  customer_id: string;
+interface Driver {
+  driver_id: string;
 }
 
 export async function GET(
   req: Request,
-  { params }: { params: Promise<{ customer_id: string }> },
+  { params }: { params: Promise<{ driver_id: string }> },
 ) {
   try {
-    const { customer_id } = await params;
+    const { driver_id } = await params;
     const [rows] = (await connect.query(
-      "SELECT *  FROM customers WHERE customer_id = ?",
-      [customer_id],
-    )) as [Customer[], any];
+      "SELECT *  FROM drivers WHERE driver_id = ?",
+      [driver_id],
+    )) as [Driver[], any];
 
-    const customer = rows[0];
+    const driver = rows[0];
 
     return Response.json({
-      message: "ดึงข้อมูลลูกค้าสำเร็จ",
-      customer: customer,
+      message: "ดึงข้อมูลพนักงานขับรถสำเร็จ",
+      driver: driver,
     });
   } catch (error) {
-    console.error("Error during customer:", error);
+    console.error("Error during driver:", error);
     return Response.json(
       {
-        message: "เกิดข้อผิดพลาดในการดึงข้อมูลลูกค้า",
+        message: "เกิดข้อผิดพลาดในการดึงข้อมูลพนักงานขับรถ",
       },
       { status: 500 },
     );
@@ -34,41 +34,25 @@ export async function GET(
 
 export async function PUT(
   req: Request,
-  { params }: { params: Promise<{ customer_id: string }> },
+  { params }: { params: Promise<{ driver_id: string }> },
 ) {
   try {
-    const { customer_id } = await params;
-    const {
-      customer_type,
-      customer_name,
-      customer_phone,
-      email,
-      tax_id,
-      billing_address,
-    } = await req.json();
+    const { driver_id } = await params;
+    const { license_number, license_expiry, is_active } = await req.json();
 
     await connect.query(
-      "UPDATE customers SET customer_type = ? , customer_name  = ?  , customer_phone = ? , email = ? ,  tax_id = ? , billing_address = ?  , updated_at = ? WHERE customer_id = ? ",
-      [
-        customer_type,
-        customer_name,
-        customer_phone,
-        email,
-        tax_id,
-        billing_address,
-        new Date(),
-        customer_id,
-      ],
+      "UPDATE drivers SET user_id = ? , license_number  = ?  , license_expiry = ? , is_active = ? ,  updated_at = ?  WHERE driver_id = ? ",
+      [null, license_number, license_expiry, is_active, new Date(), driver_id],
     );
 
     return Response.json({
       message: "แก้ไขข้อมูลสำเร็จ",
     });
   } catch (error) {
-    console.error("Error during customers:", error);
+    console.error("Error during drivers:", error);
     return Response.json(
       {
-        message: "เกิดข้อผิดพลาดในการแก้ไขลูกค้า",
+        message: "เกิดข้อผิดพลาดในการแก้ไขพนักงานขับรถ",
       },
       { status: 500 },
     );
@@ -77,23 +61,23 @@ export async function PUT(
 
 export async function DELETE(
   req: Request,
-  { params }: { params: Promise<{ customer_id: string }> },
+  { params }: { params: Promise<{ driver_id: string }> },
 ) {
   try {
-    const { customer_id } = await params;
+    const { driver_id } = await params;
 
-    await connect.query("DELETE  FROM customers WHERE customer_id = ?", [
-      customer_id,
+    await connect.query("DELETE  FROM drivers WHERE driver_id = ?", [
+      driver_id,
     ]);
 
     return Response.json({
       message: "ลบข้อมูลสำเร็จ",
     });
   } catch (error) {
-    console.error("Error during customers:", error);
+    console.error("Error during drivers:", error);
     return Response.json(
       {
-        message: "เกิดข้อผิดพลาดในการลบข้อมูลลูกค้า",
+        message: "เกิดข้อผิดพลาดในการลบข้อมูลพนักงานขับรถ",
       },
       { status: 500 },
     );
