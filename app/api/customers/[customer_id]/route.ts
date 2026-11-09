@@ -65,7 +65,7 @@ export async function PUT(
       message: "แก้ไขข้อมูลสำเร็จ",
     });
   } catch (error) {
-    console.error("Error during users:", error);
+    console.error("Error during customers:", error);
     return Response.json(
       {
         message: "เกิดข้อผิดพลาดในการแก้ไขลูกค้า",
@@ -90,7 +90,7 @@ export async function DELETE(
       message: "ลบข้อมูลสำเร็จ",
     });
   } catch (error) {
-    console.error("Error during users:", error);
+    console.error("Error during customers:", error);
     return Response.json(
       {
         message: "เกิดข้อผิดพลาดในการลบข้อมูลลูกค้า",
