@@ -1,31 +1,31 @@
 import { connect } from "@/lib/mysql_connect";
 
-interface Customer {
-  customer_id: string;
+interface Vehicles {
+  vehicle_id: string;
 }
 
 export async function GET(
   req: Request,
-  { params }: { params: Promise<{ customer_id: string }> },
+  { params }: { params: Promise<{ vehicle_id: string }> },
 ) {
   try {
-    const { customer_id } = await params;
+    const { vehicle_id } = await params;
     const [rows] = (await connect.query(
-      "SELECT *  FROM customers WHERE customer_id = ?",
-      [customer_id],
-    )) as [Customer[], any];
+      "SELECT *  FROM vehicles WHERE vehicle_id = ?",
+      [vehicle_id],
+    )) as [Vehicles[], any];
 
-    const customer = rows[0];
+    const vehicle = rows[0];
 
     return Response.json({
-      message: "ดึงข้อมูลลูกค้าสำเร็จ",
-      customer: customer,
+      message: "ดึงข้อมูลรถขนส่งสำเร็จ",
+      vehicle: vehicle,
     });
   } catch (error) {
-    console.error("Error during customer:", error);
+    console.error("Error during vehicle:", error);
     return Response.json(
       {
-        message: "เกิดข้อผิดพลาดในการดึงข้อมูลลูกค้า",
+        message: "เกิดข้อผิดพลาดในการดึงข้อมูลรถขนส่ง",
       },
       { status: 500 },
     );
@@ -34,30 +34,23 @@ export async function GET(
 
 export async function PUT(
   req: Request,
-  { params }: { params: Promise<{ customer_id: string }> },
+  { params }: { params: Promise<{ vehicle_id: string }> },
 ) {
   try {
-    const { customer_id } = await params;
-    const {
-      customer_type,
-      customer_name,
-      customer_phone,
-      email,
-      tax_id,
-      billing_address,
-    } = await req.json();
+    const { vehicle_id } = await params;
+    const { plate_number, plate_province, vehicle_type, capacity_kg, status } =
+      await req.json();
 
     await connect.query(
-      "UPDATE customers SET customer_type = ? , customer_name  = ?  , customer_phone = ? , email = ? ,  tax_id = ? , billing_address = ?  , updated_at = ? WHERE customer_id = ? ",
+      "UPDATE vehicles SET plate_number = ? , plate_province  = ?  , vehicle_type = ? , capacity_kg = ? ,  status = ? , updated_at = ?   WHERE vehicle_id = ? ",
       [
-        customer_type,
-        customer_name,
-        customer_phone,
-        email,
-        tax_id,
-        billing_address,
+        plate_number,
+        plate_province,
+        vehicle_type,
+        capacity_kg,
+        status,
         new Date(),
-        customer_id,
+        vehicle_id,
       ],
     );
 
@@ -65,10 +58,10 @@ export async function PUT(
       message: "แก้ไขข้อมูลสำเร็จ",
     });
   } catch (error) {
-    console.error("Error during customers:", error);
+    console.error("Error during vehicles:", error);
     return Response.json(
       {
-        message: "เกิดข้อผิดพลาดในการแก้ไขลูกค้า",
+        message: "เกิดข้อผิดพลาดในการแก้ไขรถขนส่ง",
       },
       { status: 500 },
     );
@@ -77,23 +70,23 @@ export async function PUT(
 
 export async function DELETE(
   req: Request,
-  { params }: { params: Promise<{ customer_id: string }> },
+  { params }: { params: Promise<{ vehicle_id: string }> },
 ) {
   try {
-    const { customer_id } = await params;
+    const { vehicle_id } = await params;
 
-    await connect.query("DELETE  FROM customers WHERE customer_id = ?", [
-      customer_id,
+    await connect.query("DELETE  FROM vehicles WHERE vehicle_id = ?", [
+      vehicle_id,
     ]);
 
     return Response.json({
       message: "ลบข้อมูลสำเร็จ",
     });
   } catch (error) {
-    console.error("Error during customers:", error);
+    console.error("Error during vehicles:", error);
     return Response.json(
       {
-        message: "เกิดข้อผิดพลาดในการลบข้อมูลลูกค้า",
+        message: "เกิดข้อผิดพลาดในการลบข้อมูลรถขนส่ง",
       },
       { status: 500 },
     );

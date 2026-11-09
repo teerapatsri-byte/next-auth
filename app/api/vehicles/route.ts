@@ -2,31 +2,31 @@ import { connect } from "@/lib/mysql_connect";
 
 export async function GET(req: Request) {
   try {
-    const { customer_name } = Object.fromEntries(new URL(req.url).searchParams);
+    const { plate_number } = Object.fromEntries(new URL(req.url).searchParams);
 
-    if (customer_name) {
+    if (plate_number) {
       const [rows] = await connect.query(
-        "SELECT * FROM customers WHERE customer_name LIKE ?  LIMIT 10",
-        [`${customer_name}%`],
+        "SELECT * FROM vehicles WHERE plate_number LIKE ?  LIMIT 10",
+        [`${plate_number}%`],
       );
 
       return Response.json({
-        message: "ดึงข้อมูลลูกค้าจากการค้นหาสำเร็จ",
-        customers: rows,
+        message: "ดึงข้อมูลรถขนส่งจากการค้นหาสำเร็จ",
+        vehicles: rows,
       });
     }
 
-    const [rows] = await connect.query("SELECT * FROM customers  LIMIT 10");
+    const [rows] = await connect.query("SELECT * FROM vehicles  LIMIT 10");
 
     return Response.json({
-      message: "ดึงข้อมูลลูกค้าสำเร็จ",
-      customers: rows,
+      message: "ดึงข้อมูลรถขนส่งสำเร็จ",
+      vehicles: rows,
     });
   } catch (error) {
-    console.error("Error during customers:", error);
+    console.error("Error during vehicles:", error);
     return Response.json(
       {
-        message: "เกิดข้อผิดพลาดในการดึงข้อมูลลูกค้า",
+        message: "เกิดข้อผิดพลาดในการดึงข้อมูลรถขนส่ง",
       },
       { status: 500 },
     );
@@ -35,30 +35,29 @@ export async function GET(req: Request) {
 
 export async function POST(req: Request) {
   try {
-    const { customer_name, customer_phone, email, tax_id, billing_address } =
+    const { plate_number, plate_province, vehicle_type, capacity_kg, status } =
       await req.json();
 
     await connect.query(
-      "INSERT INTO customers (customer_type, customer_name, customer_phone, email, tax_id, billing_address, created_at) VALUES (? , ? , ? , ? , ? , ? , ?)",
+      "INSERT INTO vehicles (plate_number, plate_province, vehicle_type, capacity_kg, status, created_at) VALUES (? , ? , ? , ? , ? , ? )",
       [
-        "person",
-        customer_name,
-        customer_phone,
-        email,
-        tax_id,
-        billing_address,
+        plate_number,
+        plate_province,
+        vehicle_type,
+        capacity_kg,
+        status,
         new Date(),
       ],
     );
 
     return Response.json({
-      message: "เพิ่มข้อมูลลูกค้าสำเร็จ",
+      message: "เพิ่มข้อมูลรถขนส่งสำเร็จ",
     });
   } catch (error) {
-    console.error("Error during customers:", error);
+    console.error("Error during vehicles:", error);
     return Response.json(
       {
-        message: "เกิดข้อผิดพลาดในเพิ่มลูกค้า",
+        message: "เกิดข้อผิดพลาดในเพิ่มรถขนส่ง",
       },
       { status: 500 },
     );
