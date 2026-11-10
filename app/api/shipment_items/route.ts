@@ -2,31 +2,19 @@ import { connect } from "@/lib/mysql_connect";
 
 export async function GET(req: Request) {
   try {
-    const { customer_name } = Object.fromEntries(new URL(req.url).searchParams);
-
-    if (customer_name) {
-      const [rows] = await connect.query(
-        "SELECT * FROM customers WHERE customer_name LIKE ?  LIMIT 10",
-        [`${customer_name}%`],
-      );
-
-      return Response.json({
-        message: "ดึงข้อมูลลูกค้าจากการค้นหาสำเร็จ",
-        customers: rows,
-      });
-    }
-
-    const [rows] = await connect.query("SELECT * FROM customers  LIMIT 10");
+    const [rows] = await connect.query(
+      "SELECT * FROM shipment_items  LIMIT 10",
+    );
 
     return Response.json({
-      message: "ดึงข้อมูลลูกค้าสำเร็จ",
-      customers: rows,
+      message: "ดึงข้อมูลสินค้าในรายการขนส่งสำเร็จ",
+      shipment_items: rows,
     });
   } catch (error) {
-    console.error("Error during customers:", error);
+    console.error("Error during shipment_items:", error);
     return Response.json(
       {
-        message: "เกิดข้อผิดพลาดในการดึงข้อมูลลูกค้า",
+        message: "เกิดข้อผิดพลาดในการดึงข้อมูลสินค้าในรายการขนส่ง",
       },
       { status: 500 },
     );
@@ -35,30 +23,40 @@ export async function GET(req: Request) {
 
 export async function POST(req: Request) {
   try {
-    const { customer_name, customer_phone, email, tax_id, billing_address } =
-      await req.json();
+    const {
+      shipment_id,
+      description,
+      quantity,
+      unit_weight_kg,
+      length_cm,
+      width_cm,
+      height_cm,
+      is_fragile,
+    } = await req.json();
 
     await connect.query(
-      "INSERT INTO customers (customer_type, customer_name, customer_phone, email, tax_id, billing_address, created_at) VALUES (? , ? , ? , ? , ? , ? , ?)",
+      "INSERT INTO shipment_items (shipment_id, description, quantity, unit_weight_kg, length_cm, width_cm, height_cm, is_fragile, created_at) VALUES (? , ? , ? , ? , ? , ? , ? , ? , ?)",
       [
-        "person",
-        customer_name,
-        customer_phone,
-        email,
-        tax_id,
-        billing_address,
+        shipment_id,
+        description,
+        quantity,
+        unit_weight_kg,
+        length_cm,
+        width_cm,
+        height_cm,
+        is_fragile,
         new Date(),
       ],
     );
 
     return Response.json({
-      message: "เพิ่มข้อมูลลูกค้าสำเร็จ",
+      message: "เพิ่มข้อมูลสินค้าในรายการขนส่งสำเร็จ",
     });
   } catch (error) {
-    console.error("Error during customers:", error);
+    console.error("Error during shipment_items:", error);
     return Response.json(
       {
-        message: "เกิดข้อผิดพลาดในเพิ่มลูกค้า",
+        message: "เกิดข้อผิดพลาดในเพิ่มสินค้าในรายการขนส่ง",
       },
       { status: 500 },
     );
