@@ -2,31 +2,19 @@ import { connect } from "@/lib/mysql_connect";
 
 export async function GET(req: Request) {
   try {
-    const { customer_name } = Object.fromEntries(new URL(req.url).searchParams);
-
-    if (customer_name) {
-      const [rows] = await connect.query(
-        "SELECT * FROM customers WHERE customer_name LIKE ?  LIMIT 10",
-        [`${customer_name}%`],
-      );
-
-      return Response.json({
-        message: "ดึงข้อมูลลูกค้าจากการค้นหาสำเร็จ",
-        customers: rows,
-      });
-    }
-
-    const [rows] = await connect.query("SELECT * FROM customers  LIMIT 10");
+    const [rows] = await connect.query(
+      "SELECT * FROM shipment_assignments  LIMIT 10",
+    );
 
     return Response.json({
-      message: "ดึงข้อมูลลูกค้าสำเร็จ",
-      customers: rows,
+      message: "ดึงข้อมูลประวัติการมอบหมายงานสำเร็จ",
+      shipment_assignments: rows,
     });
   } catch (error) {
-    console.error("Error during customers:", error);
+    console.error("Error during shipment_assignments:", error);
     return Response.json(
       {
-        message: "เกิดข้อผิดพลาดในการดึงข้อมูลลูกค้า",
+        message: "เกิดข้อผิดพลาดในการดึงข้อมูลประวัติการมอบหมายงาน",
       },
       { status: 500 },
     );
@@ -35,30 +23,38 @@ export async function GET(req: Request) {
 
 export async function POST(req: Request) {
   try {
-    const { customer_name, customer_phone, email, tax_id, billing_address } =
-      await req.json();
+    const {
+      shipment_id,
+      driver_id,
+      vehicle_id,
+      assigned_by,
+      assigned_at,
+      ended_at,
+      note,
+    } = await req.json();
 
     await connect.query(
-      "INSERT INTO customers (customer_type, customer_name, customer_phone, email, tax_id, billing_address, created_at) VALUES (? , ? , ? , ? , ? , ? , ?)",
+      "INSERT INTO shipment_assignments (shipment_id, driver_id, vehicle_id, assigned_by, assigned_at, ended_at, note, created_at) VALUES (? , ? , ? , ? , ? , ? , ? , ?)",
       [
-        "person",
-        customer_name,
-        customer_phone,
-        email,
-        tax_id,
-        billing_address,
+        shipment_id,
+        driver_id,
+        vehicle_id,
+        assigned_by,
+        assigned_at,
+        ended_at,
+        note,
         new Date(),
       ],
     );
 
     return Response.json({
-      message: "เพิ่มข้อมูลลูกค้าสำเร็จ",
+      message: "เพิ่มข้อมูลประวัติการมอบหมายงานสำเร็จ",
     });
   } catch (error) {
-    console.error("Error during customers:", error);
+    console.error("Error during shipment_assignments:", error);
     return Response.json(
       {
-        message: "เกิดข้อผิดพลาดในเพิ่มลูกค้า",
+        message: "เกิดข้อผิดพลาดในเพิ่มประวัติการมอบหมายงาน",
       },
       { status: 500 },
     );
