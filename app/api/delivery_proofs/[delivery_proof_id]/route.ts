@@ -1,31 +1,31 @@
 import { connect } from "@/lib/mysql_connect";
 
-interface Customer {
-  customer_id: string;
+interface DeliveryProof {
+  delivery_proof_id: string;
 }
 
 export async function GET(
   req: Request,
-  { params }: { params: Promise<{ customer_id: string }> },
+  { params }: { params: Promise<{ delivery_proof_id: string }> },
 ) {
   try {
-    const { customer_id } = await params;
+    const { delivery_proof_id } = await params;
     const [rows] = (await connect.query(
-      "SELECT *  FROM customers WHERE customer_id = ?",
-      [customer_id],
-    )) as [Customer[], any];
+      "SELECT *  FROM delivery_proofs WHERE delivery_proof_id = ?",
+      [delivery_proof_id],
+    )) as [DeliveryProof[], any];
 
-    const customer = rows[0];
+    const delivery_proof = rows[0];
 
     return Response.json({
-      message: "ดึงข้อมูลลูกค้าสำเร็จ",
-      customer: customer,
+      message: "ดึงข้อมูลหลักฐานการส่งมอบสำเร็จ",
+      delivery_proof: delivery_proof,
     });
   } catch (error) {
-    console.error("Error during customer:", error);
+    console.error("Error during delivery_proof:", error);
     return Response.json(
       {
-        message: "เกิดข้อผิดพลาดในการดึงข้อมูลลูกค้า",
+        message: "เกิดข้อผิดพลาดในการดึงข้อมูลหลักฐานการส่งมอบ",
       },
       { status: 500 },
     );
@@ -34,30 +34,22 @@ export async function GET(
 
 export async function PUT(
   req: Request,
-  { params }: { params: Promise<{ customer_id: string }> },
+  { params }: { params: Promise<{ delivery_proof_id: string }> },
 ) {
   try {
-    const { customer_id } = await params;
-    const {
-      customer_type,
-      customer_name,
-      customer_phone,
-      email,
-      tax_id,
-      billing_address,
-    } = await req.json();
+    const { delivery_proof_id } = await params;
+    const { shipment_event_id, received_by, photo_key, signature_key } =
+      await req.json();
 
     await connect.query(
-      "UPDATE customers SET customer_type = ? , customer_name  = ?  , customer_phone = ? , email = ? ,  tax_id = ? , billing_address = ?  , updated_at = ? WHERE customer_id = ? ",
+      "UPDATE delivery_proofs SET shipment_event_id = ? , received_by  = ?  , photo_key = ? , signature_key = ?  , updated_at = ? WHERE delivery_proof_id = ? ",
       [
-        customer_type,
-        customer_name,
-        customer_phone,
-        email,
-        tax_id,
-        billing_address,
+        shipment_event_id,
+        received_by,
+        photo_key,
+        signature_key,
         new Date(),
-        customer_id,
+        delivery_proof_id,
       ],
     );
 
@@ -65,10 +57,10 @@ export async function PUT(
       message: "แก้ไขข้อมูลสำเร็จ",
     });
   } catch (error) {
-    console.error("Error during customers:", error);
+    console.error("Error during delivery_proofs:", error);
     return Response.json(
       {
-        message: "เกิดข้อผิดพลาดในการแก้ไขลูกค้า",
+        message: "เกิดข้อผิดพลาดในการแก้ไขหลักฐานการส่งมอบ",
       },
       { status: 500 },
     );
@@ -77,23 +69,24 @@ export async function PUT(
 
 export async function DELETE(
   req: Request,
-  { params }: { params: Promise<{ customer_id: string }> },
+  { params }: { params: Promise<{ delivery_proof_id: string }> },
 ) {
   try {
-    const { customer_id } = await params;
+    const { delivery_proof_id } = await params;
 
-    await connect.query("DELETE  FROM customers WHERE customer_id = ?", [
-      customer_id,
-    ]);
+    await connect.query(
+      "DELETE  FROM delivery_proofs WHERE delivery_proof_id = ?",
+      [delivery_proof_id],
+    );
 
     return Response.json({
       message: "ลบข้อมูลสำเร็จ",
     });
   } catch (error) {
-    console.error("Error during customers:", error);
+    console.error("Error during delivery_proofs:", error);
     return Response.json(
       {
-        message: "เกิดข้อผิดพลาดในการลบข้อมูลลูกค้า",
+        message: "เกิดข้อผิดพลาดในการลบข้อมูลหลักฐานการส่งมอบ",
       },
       { status: 500 },
     );

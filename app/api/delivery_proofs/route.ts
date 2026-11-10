@@ -2,31 +2,19 @@ import { connect } from "@/lib/mysql_connect";
 
 export async function GET(req: Request) {
   try {
-    const { customer_name } = Object.fromEntries(new URL(req.url).searchParams);
-
-    if (customer_name) {
-      const [rows] = await connect.query(
-        "SELECT * FROM customers WHERE customer_name LIKE ?  LIMIT 10",
-        [`${customer_name}%`],
-      );
-
-      return Response.json({
-        message: "ดึงข้อมูลลูกค้าจากการค้นหาสำเร็จ",
-        customers: rows,
-      });
-    }
-
-    const [rows] = await connect.query("SELECT * FROM customers  LIMIT 10");
+    const [rows] = await connect.query(
+      "SELECT * FROM delivery_proofs  LIMIT 10",
+    );
 
     return Response.json({
-      message: "ดึงข้อมูลลูกค้าสำเร็จ",
-      customers: rows,
+      message: "ดึงข้อมูลหลักฐานการส่งมอบสำเร็จ",
+      delivery_proofs: rows,
     });
   } catch (error) {
-    console.error("Error during customers:", error);
+    console.error("Error during delivery_proofs:", error);
     return Response.json(
       {
-        message: "เกิดข้อผิดพลาดในการดึงข้อมูลลูกค้า",
+        message: "เกิดข้อผิดพลาดในการดึงข้อมูลหลักฐานการส่งมอบ",
       },
       { status: 500 },
     );
@@ -35,30 +23,22 @@ export async function GET(req: Request) {
 
 export async function POST(req: Request) {
   try {
-    const { customer_name, customer_phone, email, tax_id, billing_address } =
+    const { shipment_event_id, received_by, photo_key, signature_key } =
       await req.json();
 
     await connect.query(
-      "INSERT INTO customers (customer_type, customer_name, customer_phone, email, tax_id, billing_address, created_at) VALUES (? , ? , ? , ? , ? , ? , ?)",
-      [
-        "person",
-        customer_name,
-        customer_phone,
-        email,
-        tax_id,
-        billing_address,
-        new Date(),
-      ],
+      "INSERT INTO delivery_proofs (shipment_event_id, received_by, photo_key, signature_key, created_at) VALUES (? , ? , ? , ? , ? )",
+      [shipment_event_id, received_by, photo_key, signature_key, new Date()],
     );
 
     return Response.json({
-      message: "เพิ่มข้อมูลลูกค้าสำเร็จ",
+      message: "เพิ่มข้อมูลหลักฐานการส่งมอบสำเร็จ",
     });
   } catch (error) {
-    console.error("Error during customers:", error);
+    console.error("Error during delivery_proofs:", error);
     return Response.json(
       {
-        message: "เกิดข้อผิดพลาดในเพิ่มลูกค้า",
+        message: "เกิดข้อผิดพลาดในเพิ่มหลักฐานการส่งมอบ",
       },
       { status: 500 },
     );
