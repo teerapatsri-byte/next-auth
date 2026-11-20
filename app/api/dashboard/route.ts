@@ -3,22 +3,14 @@ import { connect } from "@/lib/mysql_connect";
 export async function GET(req: Request) {
   try {
     const [userRows] = (await connect.query(
-      "SELECT COUNT(id) as countUser FROM users",
+      "SELECT COUNT(user_id) as countUser FROM users",
     )) as [{ countUser: number }[], any];
 
-    const [productRows] = (await connect.query(
-      "SELECT COUNT(product_id) as countProduct  FROM products",
-    )) as [{ countProduct: number }[], any];
-
     const user = userRows[0];
-    const product = productRows[0];
 
     return Response.json({
       message: "ดึงข้อมูลสำเร็จ",
-      stats: [
-        { title: "จำนวนผู้ใช้งาน", value: user.countUser + " " + "คน" },
-        { title: "จำนวนสินค้า", value: product.countProduct + " " + "ชิ้น" },
-      ],
+      stats: [{ title: "จำนวนผู้ใช้งาน", value: user.countUser + " " + "คน" }],
     });
   } catch (error) {
     console.error("Error during users:", error);

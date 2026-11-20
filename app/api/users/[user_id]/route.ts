@@ -1,18 +1,19 @@
 import { connect } from "@/lib/mysql_connect";
 
 interface User {
-  id: string;
+  user_id: string;
 }
 
 export async function GET(
   req: Request,
-  { params }: { params: Promise<{ id: string }> },
+  { params }: { params: Promise<{ user_id: string }> },
 ) {
   try {
-    const { id } = await params;
-    const [rows] = (await connect.query("SELECT *  FROM users WHERE id = ?", [
-      id,
-    ])) as [User[], any];
+    const { user_id } = await params;
+    const [rows] = (await connect.query(
+      "SELECT *  FROM users WHERE user_id = ?",
+      [user_id],
+    )) as [User[], any];
 
     const user = rows[0];
 
@@ -33,15 +34,15 @@ export async function GET(
 
 export async function PUT(
   req: Request,
-  { params }: { params: Promise<{ id: string }> },
+  { params }: { params: Promise<{ user_id: string }> },
 ) {
   try {
-    const { id } = await params;
-    const { first_name, last_name } = await req.json();
+    const { user_id } = await params;
+    const { username, phone, role, is_active } = await req.json();
 
     await connect.query(
-      "UPDATE users SET first_name = ? , last_name = ? , updated_at = ? WHERE id = ? ",
-      [first_name, last_name, new Date(), id],
+      "UPDATE users SET username = ?  , phone = ?  , role = ? , is_active = ?  , updated_at = ? WHERE user_id = ? ",
+      [username, phone, role, is_active, new Date(), user_id],
     );
 
     return Response.json({
@@ -60,12 +61,12 @@ export async function PUT(
 
 export async function DELETE(
   req: Request,
-  { params }: { params: Promise<{ id: string }> },
+  { params }: { params: Promise<{ user_id: string }> },
 ) {
   try {
-    const { id } = await params;
+    const { user_id } = await params;
 
-    await connect.query("DELETE  FROM users WHERE id = ?", [id]);
+    await connect.query("DELETE  FROM users WHERE user_id = ?", [user_id]);
 
     return Response.json({
       message: "ลบข้อมูลสำเร็จ",
