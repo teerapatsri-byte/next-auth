@@ -3,9 +3,9 @@ import { useState } from "react";
 import Link from "next/link";
 
 function RegisterPage() {
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
+  const [username, setUserName] = useState("");
   const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
@@ -42,9 +42,9 @@ function RegisterPage() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          firstName,
-          lastName,
+          username,
           email,
+          phone,
           password,
         }),
       });
@@ -108,43 +108,25 @@ function RegisterPage() {
             </div>
           )}
           <h5 className="text-xl font-medium text-gray-900 dark:text-white">
-            ลงทะเบียนเข้าสู่ระบบ
+            ลงทะเบียน
           </h5>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label
-                htmlFor="firstName"
-                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-              >
-                ชื่อ
-              </label>
-              <input
-                type="text"
-                name="firstName"
-                id="firstName"
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-                placeholder="John"
-                value={firstName}
-                onChange={(e) => setFirstName(e.target.value)}
-              />
-            </div>
-            <div>
-              <label
-                htmlFor="lastName"
-                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-              >
-                สกุล
-              </label>
-              <input
-                type="text"
-                name="lastName"
-                id="lastName"
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-                placeholder="Doe"
-                value={lastName}
-                onChange={(e) => setLastName(e.target.value)}
-              />
-            </div>
+
+          <div>
+            <label
+              htmlFor="username"
+              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+            >
+              ชื่อผู้ใช้
+            </label>
+            <input
+              type="text"
+              name="username"
+              id="username"
+              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+              placeholder="John"
+              value={username}
+              onChange={(e) => setUserName(e.target.value)}
+            />
           </div>
 
           <div>
@@ -162,6 +144,23 @@ function RegisterPage() {
               placeholder="name@company.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+            />
+          </div>
+          <div>
+            <label
+              htmlFor="phone"
+              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+            >
+              เบอร์โทรศัพท์
+            </label>
+            <input
+              type="text"
+              name="phone"
+              id="phone"
+              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+              placeholder="0812345678"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
             />
           </div>
           <div>
@@ -208,8 +207,8 @@ function RegisterPage() {
           <div className="text-sm font-medium text-gray-500 dark:text-gray-300">
             หากมีบัญชี?
             <Link
-              href="/"
-              className="text-blue-700 hover:underline dark:text-blue-500"
+              href="/login"
+              className="text-blue-700 hover:underline dark:text-blue-500 ml-0.2"
             >
               เข้าสู่ระบบ
             </Link>
